@@ -12,6 +12,7 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.ModifierUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 
@@ -709,10 +710,7 @@ public class BeanUtil {
 	 * @param copyOptions 拷贝选项，见 {@link CopyOptions}
 	 */
 	public static void copyProperties(Object source, Object target, CopyOptions copyOptions) {
-		if (null == copyOptions) {
-			copyOptions = new CopyOptions();
-		}
-		BeanCopier.create(source, target, copyOptions).copy();
+		BeanCopier.create(source, target, ObjectUtil.defaultIfNull(copyOptions, CopyOptions.create())).copy();
 	}
 
 	/**
@@ -732,6 +730,20 @@ public class BeanUtil {
 			copyProperties(source, target, copyOptions);
 			return target;
 		}).collect(Collectors.toList());
+	}
+
+	/**
+	 * 复制集合中的Bean属性<br>
+	 * 此方法遍历集合中每个Bean，复制其属性后加入一个新的{@link List}中。
+	 *
+	 * @param collection 原Bean集合
+	 * @param targetType 目标Bean类型
+	 * @param <T> Bean类型
+	 * @return 复制后的List
+	 * @since 5.6.6
+	 */
+	public static <T> List<T> copyToList(Collection<?> collection, Class<T> targetType){
+		return copyToList(collection, targetType, CopyOptions.create());
 	}
 
 	/**
@@ -826,7 +838,7 @@ public class BeanUtil {
 	 * @return 是否为空，{@code true} - 空 / {@code false} - 非空
 	 * @since 4.1.10
 	 */
-	public static boolean isEmpty(Object bean, String... ignoreFiledNames) {
+	public static boolean  isEmpty(Object bean, String... ignoreFiledNames) {
 		if (null != bean) {
 			for (Field field : ReflectUtil.getFields(bean.getClass())) {
 				if (ModifierUtil.isStatic(field)) {

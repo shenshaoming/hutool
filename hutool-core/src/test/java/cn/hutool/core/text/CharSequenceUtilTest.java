@@ -24,4 +24,6 @@ public class CharSequenceUtilTest {
 		result = CharSequenceUtil.addSuffixIfNot(str, " is Good");
 		Assert.assertEquals( str + " is Good", result);
 	}
+
+	// ------------------------------------------------------------------------ remove
 }

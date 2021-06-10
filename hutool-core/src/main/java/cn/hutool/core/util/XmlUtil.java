@@ -1185,7 +1185,7 @@ public class XmlUtil {
 	 * @since 5.1.2
 	 */
 	public static String mapToXmlStr(Map<?, ?> data, String rootName, String namespace, boolean isPretty, boolean omitXmlDeclaration) {
-		return toStr(mapToXml(data, rootName, namespace), CharsetUtil.UTF_8, isPretty);
+		return toStr(mapToXml(data, rootName, namespace), CharsetUtil.UTF_8, isPretty, omitXmlDeclaration);
 	}
 
 	/**
@@ -1508,7 +1508,7 @@ public class XmlUtil {
 		 */
 		@Override
 		public String getNamespaceURI(String prefix) {
-			if (prefix == null || prefix.equals(XMLConstants.DEFAULT_NS_PREFIX)) {
+			if (prefix == null || XMLConstants.DEFAULT_NS_PREFIX.equals(prefix)) {
 				return prefixUri.get(DEFAULT_NS);
 			} else {
 				return prefixUri.get(prefix);

@@ -285,20 +285,24 @@ public class SqlConnRunner extends DialectRunner {
 	 *
 	 * @param conn      数据库连接对象
 	 * @param selectSql 查询语句
+	 * @param params    查询参数
 	 * @return 结果数
 	 * @throws SQLException SQL异常
+	 * @since 5.6.6
 	 */
-	public long count(Connection conn, CharSequence selectSql) throws SQLException {
+	public long count(Connection conn, CharSequence selectSql, Object... params) throws SQLException {
 		Assert.notBlank(selectSql, "Select SQL must be not blank!");
 		final int orderByIndex = StrUtil.indexOfIgnoreCase(selectSql, " order by");
-		if(orderByIndex > 0){
+		if (orderByIndex > 0) {
 			selectSql = StrUtil.subPre(selectSql, orderByIndex);
 		}
 
 		SqlBuilder sqlBuilder = SqlBuilder.of(selectSql)
 				.insertPreFragment("SELECT count(1) from(")
 				// issue#I3IJ8X@Gitee，在子查询时需设置单独别名，此处为了防止和用户的表名冲突，使用自定义的较长别名
-				.append(") as _hutool_alias_count_");
+				.append(") as _hutool_alias_count_")
+				// 添加参数
+				.addParams(params);
 		return page(conn, sqlBuilder, null, new NumberHandler()).intValue();
 	}
 

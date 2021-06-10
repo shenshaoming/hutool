@@ -163,14 +163,34 @@ public class ArrayUtil extends PrimitiveArrayUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T firstMatch(Matcher<T> matcher, T... array) {
+		final int index = matchIndex(matcher, array);
+		if(index < 0){
+			return null;
+		}
+
+		return array[index];
+	}
+
+	/**
+	 * 返回数组中第一个匹配规则的值的位置
+	 *
+	 * @param <T>     数组元素类型
+	 * @param matcher 匹配接口，实现此接口自定义匹配规则
+	 * @param array   数组
+	 * @return 匹配到元素的位置，-1表示未匹配到
+	 * @since 5.6.6
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> int matchIndex(Matcher<T> matcher, T... array) {
 		if (isNotEmpty(array)) {
-			for (final T val : array) {
-				if (matcher.match(val)) {
-					return val;
+			for(int i = 0; i < array.length; i++){
+				if(matcher.match(array[i])){
+					return i;
 				}
 			}
 		}
-		return null;
+
+		return INDEX_NOT_FOUND;
 	}
 
 	/**
@@ -739,14 +759,7 @@ public class ArrayUtil extends PrimitiveArrayUtil {
 	 * @since 3.0.7
 	 */
 	public static <T> int indexOf(T[] array, Object value) {
-		if (null != array) {
-			for (int i = 0; i < array.length; i++) {
-				if (ObjectUtil.equal(value, array[i])) {
-					return i;
-				}
-			}
-		}
-		return INDEX_NOT_FOUND;
+		return matchIndex((obj)-> ObjectUtil.equal(value, obj), array);
 	}
 
 	/**
@@ -1186,31 +1199,6 @@ public class ArrayUtil extends PrimitiveArrayUtil {
 			if (null != item) {
 				sb.append(StrUtil.toString(item));
 			}
-		}
-		return sb.toString();
-	}
-
-	/**
-	 * 以 conjunction 为分隔符将数组转换为字符串
-	 *
-	 * @param array       数组
-	 * @param conjunction 分隔符
-	 * @return 连接后的字符串
-	 */
-	public static String join(long[] array, CharSequence conjunction) {
-		if (null == array) {
-			return null;
-		}
-
-		final StringBuilder sb = new StringBuilder();
-		boolean isFirst = true;
-		for (long item : array) {
-			if (isFirst) {
-				isFirst = false;
-			} else {
-				sb.append(conjunction);
-			}
-			sb.append(item);
 		}
 		return sb.toString();
 	}

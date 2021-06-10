@@ -1,7 +1,6 @@
 package cn.hutool.core.collection;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.lang.Console;
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.lang.Editor;
 import cn.hutool.core.lang.Filter;
@@ -103,7 +102,7 @@ public class CollUtilTest {
 
 		Collection<String> union = CollUtil.union(list1, list2);
 
-		Assert.assertEquals(3, CollUtil.count(union, t -> t.equals("b")));
+		Assert.assertEquals(3, CollUtil.count(union, t -> "b".equals(t)));
 	}
 
 	@Test
@@ -112,7 +111,7 @@ public class CollUtilTest {
 		ArrayList<String> list2 = CollUtil.newArrayList("a", "b", "b", "b", "c", "d");
 
 		Collection<String> intersection = CollUtil.intersection(list1, list2);
-		Assert.assertEquals(2, CollUtil.count(intersection, t -> t.equals("b")));
+		Assert.assertEquals(2, CollUtil.count(intersection, t -> "b".equals(t)));
 	}
 
 	@Test
@@ -237,7 +236,7 @@ public class CollUtilTest {
 
 		final String[] result = new String[1];
 		CollUtil.forEach(map, (key, value, index) -> {
-			if (key.equals("a")) {
+			if ("a".equals(key)) {
 				result[0] = value;
 			}
 		});
@@ -685,6 +684,29 @@ public class CollUtilTest {
 		Assert.assertEquals(Integer.valueOf(2), countMap.get("b"));
 		Assert.assertEquals(Integer.valueOf(2), countMap.get("c"));
 		Assert.assertEquals(Integer.valueOf(1), countMap.get("d"));
+	}
+
+	@Test
+	public void indexOfTest() {
+		ArrayList<String> list = CollUtil.newArrayList("a", "b", "c", "c", "a", "b", "d");
+		final int i = CollUtil.indexOf(list, (str) -> str.charAt(0) == 'c');
+		Assert.assertEquals(2, i);
+	}
+
+	@Test
+	public void lastIndexOfTest() {
+		// List有优化
+		ArrayList<String> list = CollUtil.newArrayList("a", "b", "c", "c", "a", "b", "d");
+		final int i = CollUtil.lastIndexOf(list, (str) -> str.charAt(0) == 'c');
+		Assert.assertEquals(3, i);
+	}
+
+	@Test
+	public void lastIndexOfSetTest() {
+		Set<String> list = CollUtil.set(true, "a", "b", "c", "c", "a", "b", "d");
+		// 去重后c排第三
+		final int i = CollUtil.lastIndexOf(list, (str) -> str.charAt(0) == 'c');
+		Assert.assertEquals(2, i);
 	}
 
 	@Test

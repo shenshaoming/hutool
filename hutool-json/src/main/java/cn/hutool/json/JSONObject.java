@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.SortedMap;
 
 /**
  * JSON对象<br>
@@ -157,7 +158,7 @@ public class JSONObject implements JSON, JSONGetter<String>, Map<String, Object>
 	 * @since 3.0.9
 	 */
 	public JSONObject(Object source, boolean ignoreNullValue) {
-		this(source, ignoreNullValue, (source instanceof LinkedHashMap));
+		this(source, ignoreNullValue, (source instanceof LinkedHashMap) || (source instanceof SortedMap));
 	}
 
 	/**

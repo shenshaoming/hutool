@@ -3,10 +3,77 @@
 
 -------------------------------------------------------------------------------------------------------------
 
-# 5.6.5 (2021-04-25)
+# 5.6.8 (2021-06-09)
 
 ### 🐣新特性
+
 ### 🐞Bug修复
+
+-------------------------------------------------------------------------------------------------------------
+
+# 5.6.7 (2021-06-08)
+
+### 🐣新特性
+* 【core   】     CharSequenceUtil增加join重载（issue#I3TFJ5@Gitee）
+* 【http   】     HttpRequest增加form方法重载（pr#337@Gitee）
+* 【http   】     ImgUtil增加getMainColor方法（pr#338@Gitee）
+* 【core   】     改进TreeUtil.buid算法性能（pr#1594@Github）
+* 【core   】     CsvConfig的setXXX返回this（issue#I3UIQF@Gitee）
+* 【all    】     增加jmh基准测试
+* 【core   】     增加StreamUtil和CollectorUtil
+* 【poi    】     增加content-type(pr#1639@Github)
+
+### 🐞Bug修复
+* 【core   】     修复FileUtil.normalize去掉末尾空格问题（issue#1603@Github）
+* 【core   】     修复CharsetDetector流关闭问题（issue#1603@Github）
+* 【core   】     修复RuntimeUtil.exec引号内空格被切分的问题（issue#I3UAYB@Gitee）
+
+-------------------------------------------------------------------------------------------------------------
+
+# 5.6.6 (2021-05-26)
+
+### 🐣新特性
+* 【cron   】     增加时间轮简单实现
+* 【core   】     BeanUtil.copyToList增加重载（pr#321@Gitee）
+* 【core   】     SyncFinisher增加stop方法（issue#1578@Github）
+* 【cache  】     CacheObj默认方法改为protected（issue#I3RIEI@Gitee）
+* 【core   】     FileUtil.isEmpty不存在时返回true（issue#1582@Github）
+* 【core   】     PhoneUtil增加中国澳门和中国台湾手机号校检方法（pr#331@Gitee）
+* 【db     】     分页查询，自定义sql查询，添加参数（pr#332@Gitee）
+* 【core   】     IdCardUtil.isValidCard增加非空判断
+* 【json   】     JSONObject构造增加SortedMap判断（pr#333@Gitee）
+* 【core   】     Tuple增加部分方法（pr#333@Gitee）
+* 【log    】     增加LogTube支持
+* 【core   】     增加BitStatusUtil（pr#1600@Github）
+
+### 🐞Bug修复
+* 【core   】     修复XmlUtil中omitXmlDeclaration参数无效问题（issue#1581@Github）
+* 【core   】     修复NumberUtil.decimalFormat参数传错的问题（issue#I3SDS3@Gitee）
+* 【json   】     修复JSONArray.put方法不能覆盖值的问题
+* 【poi    】     修复sax方式读取xls无法根据sheet名称获取数据（issue#I3S4NH@Gitee）
+* 【core   】     修复路径中多个~都被替换的问题（pr#1599@Github）
+* 【core   】     修复CRC16构造非public问题（issue#1601@Github）
+
+-------------------------------------------------------------------------------------------------------------
+# 5.6.5 (2021-05-08)
+
+### 🐣新特性
+* 【http   】     HttpUtil增加closeCookie方法
+* 【core   】     NumberUtil增加方法decimalFormat重载（issue#I3OSA2@Gitee）
+* 【extra  】     Ftp的remoteVerificationEnabled改为false（issue#I3OSA2@Gitee）
+* 【core   】     MaskBit增加掩码反向转换的方法getMaskBit()（pr#1563@Github）
+* 【core   】     ReUtil等增加indexOf、delLast等方法（pr#1555@Github）
+* 【poi    】     ExcelWriter增加writeSecHeadRow，增加合并单元格边框颜色样式（pr#318@Gitee）
+
+### 🐞Bug修复
+* 【core   】     修复createScheduledExecutor单位不是毫秒的问题（issue#I3OYIW@Gitee）
+* 【core   】     修复Tailer无stop问题（issue#I3PQLQ@Gitee）
+* 【core   】     修复空白excel读取报错问题（issue#1552@Github）
+* 【extra  】     修复Sftp.mkDirs报错问题（issue#1536@Github）
+* 【core   】     修复Bcrypt不支持$2y$盐前缀问题（pr#1560@Github）
+* 【system 】     修复isWindows8拼写问题（pr#1557@Github）
+* 【db     】     修复MongoDS默认分组参数失效问题（issue#1548@Github）
+* 【core   】     修复UrlPath编码的字符问题导致的URL编码异常（issue#1537@Github）
 
 -------------------------------------------------------------------------------------------------------------
 

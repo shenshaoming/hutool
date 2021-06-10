@@ -4,6 +4,7 @@ import cn.hutool.core.annotation.Alias;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.bean.copier.ValueProvider;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
@@ -19,7 +20,14 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Bean工具单元测试
@@ -156,7 +164,7 @@ public class BeanUtilTest {
 	public void mapToBeanWinErrorTest() {
 		Map<String, String> map = new HashMap<>();
 		map.put("age", "哈哈");
-		Person user = BeanUtil.toBean(map, Person.class);
+		BeanUtil.toBean(map, Person.class);
 	}
 
 	@Test
@@ -512,6 +520,29 @@ public class BeanUtilTest {
 		Assert.assertEquals(new Long(123456L), station2.getId());
 	}
 
+	@Test
+	public void copyListTest() {
+		Student student = new Student();
+		student.setName("张三");
+		student.setAge(123);
+		student.setNo(3158L);
+
+		Student student2 = new Student();
+		student.setName("李四");
+		student.setAge(125);
+		student.setNo(8848L);
+
+		List<Student> studentList = ListUtil.of(student, student2);
+		List<Person> people = BeanUtil.copyToList(studentList, Person.class);
+
+		Assert.assertEquals(studentList.size(), people.size());
+		for (int i = 0; i < studentList.size(); i++) {
+			Assert.assertEquals(studentList.get(i).getName(), people.get(i).getName());
+			Assert.assertEquals(studentList.get(i).getAge(), people.get(i).getAge());
+		}
+
+	}
+
 	public static class Station extends Tree<Station, Long> {
 
 	}
@@ -528,12 +559,11 @@ public class BeanUtilTest {
 	@Test
 	public void toMapTest() {
 		// 测试转map的时候返回key
-		String name = null;
 		PrivilegeIClassification a = new PrivilegeIClassification();
 		a.setId("1");
 		a.setName("2");
 		a.setCode("3");
-		 a.setCreateTime(new Date());
+		a.setCreateTime(new Date());
 		a.setSortOrder(9L);
 
 		Map<String, Object> f = BeanUtil.beanToMap(
@@ -557,7 +587,7 @@ public class BeanUtilTest {
 	}
 
 	@Test
-	public void getFieldValue(){
+	public void getFieldValue() {
 		TestPojo testPojo = new TestPojo();
 		testPojo.setName("名字");
 
@@ -567,23 +597,30 @@ public class BeanUtilTest {
 		testPojo3.setAge(3);
 
 
-		testPojo.setTestPojo2List(new TestPojo2[]{testPojo2,testPojo3});
+		testPojo.setTestPojo2List(new TestPojo2[]{testPojo2, testPojo3});
 
 		BeanPath beanPath = BeanPath.create("testPojo2List.age");
 		Object o = beanPath.get(testPojo);
 
-		Assert.assertEquals(Integer.valueOf(2), ArrayUtil.get(o,0));
-		Assert.assertEquals(Integer.valueOf(3), ArrayUtil.get(o,1));
+		Assert.assertEquals(Integer.valueOf(2), ArrayUtil.get(o, 0));
+		Assert.assertEquals(Integer.valueOf(3), ArrayUtil.get(o, 1));
 	}
 
 	@Data
-	public static class TestPojo{
+	public static class TestPojo {
 		private String name;
 		private TestPojo2[] testPojo2List;
 	}
 
 	@Data
-	public static class TestPojo2{
+	public static class TestPojo2 {
 		private int age;
+	}
+
+	@Data
+	public static class Student {
+		String name;
+		int age;
+		Long no;
 	}
 }

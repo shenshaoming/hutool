@@ -8,12 +8,12 @@ import cn.hutool.core.util.CharsetUtil;
 import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
-
+import org.junit.Ignore;
 import java.util.List;
 import java.util.Map;
 
 public class CsvReaderTest {
-	
+
 	@Test
 	public void readTest() {
 		CsvReader reader = new CsvReader();
@@ -77,11 +77,24 @@ public class CsvReaderTest {
 	}
 
 	@Test
+	@Ignore
 	public void readTest2(){
 		final CsvReader reader = CsvUtil.getReader();
 		final CsvData read = reader.read(FileUtil.file("d:/test/test.csv"));
 		for (CsvRow strings : read) {
 			Console.log(strings);
+		}
+	}
+
+	@Test
+	@Ignore
+	public void readTest3(){
+		final CsvReadConfig csvReadConfig = CsvReadConfig.defaultConfig();
+		csvReadConfig.setContainsHeader(true);
+		final CsvReader reader = CsvUtil.getReader(csvReadConfig);
+		final CsvData read = reader.read(FileUtil.file("d:/test/ceshi.csv"));
+		for (CsvRow row : read) {
+			Console.log(row.getByName("案件ID"));
 		}
 	}
 }

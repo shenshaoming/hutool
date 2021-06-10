@@ -508,4 +508,5 @@ public class StrUtilTest {
 		Assert.assertEquals("jackduan@163.com", StrUtil.hide("jackduan@163.com", 16, 16));
 		Assert.assertEquals("jackduan@163.com", StrUtil.hide("jackduan@163.com", 16, 17));
 	}
+
 }
