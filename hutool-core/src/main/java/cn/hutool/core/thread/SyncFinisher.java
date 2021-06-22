@@ -1,6 +1,5 @@
 package cn.hutool.core.thread;
 
-import cn.hutool.core.exceptions.NotInitedException;
 import cn.hutool.core.exceptions.UtilException;
 
 import java.util.LinkedHashSet;
@@ -159,21 +158,6 @@ public class SyncFinisher {
 	}
 
 	/**
-	 * 等待所有Worker工作结束，否则阻塞
-	 *
-	 * @throws InterruptedException 用户中断
-	 * @deprecated 使用start方法指定是否阻塞等待
-	 */
-	@Deprecated
-	public void await() throws InterruptedException {
-		if (endLatch == null) {
-			throw new NotInitedException("Please call start() method first!");
-		}
-
-		endLatch.await();
-	}
-
-	/**
 	 * 清空工作线程对象
 	 */
 	public void clearWorker() {
@@ -213,6 +197,9 @@ public class SyncFinisher {
 			}
 		}
 
+		/**
+		 * 任务内容
+		 */
 		public abstract void work();
 	}
 }

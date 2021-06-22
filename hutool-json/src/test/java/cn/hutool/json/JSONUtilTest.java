@@ -15,6 +15,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class JSONUtilTest {
 
@@ -57,7 +59,7 @@ public class JSONUtilTest {
 		a2.setName("AAAA222Name");
 
 		ArrayList<UserA> list = CollectionUtil.newArrayList(a1, a2);
-		HashMap<String, Object> map = CollectionUtil.newHashMap();
+		HashMap<String, Object> map = MapUtil.newHashMap();
 		map.put("total", 13);
 		map.put("rows", list);
 
@@ -100,6 +102,20 @@ public class JSONUtilTest {
 
 		JSONObject json2 = JSONUtil.parseObj(json.toString());
 		Assert.assertEquals("{\"name\":\"123123\",\"value\":\"\\\\\",\"value2\":\"</\"}", json2.get("user"));
+	}
+
+	@Test
+	public void toJsonStrFromSortedTest() {
+		SortedMap<Object, Object> sortedMap = new TreeMap<Object, Object>() {
+			private static final long serialVersionUID = 1L;
+
+			{
+			put("attributes", "a");
+			put("b", "b");
+			put("c", "c");
+		}};
+
+		Assert.assertEquals("{\"attributes\":\"a\",\"b\":\"b\",\"c\":\"c\"}", JSONUtil.toJsonStr(sortedMap));
 	}
 
 	/**
@@ -196,6 +212,8 @@ public class JSONUtilTest {
 		final JSONObject jsonObject = JSONUtil.parseObj("{\n" +
 				"    \"test\": \"\\\\地库地库\",\n" +
 				"}");
+
+		Assert.assertEquals("\\地库地库", jsonObject.getObj("test"));
 	}
 
 	@Test
@@ -204,5 +222,12 @@ public class JSONUtilTest {
 		// SQLException实现了Iterable接口，默认是遍历之，会栈溢出，修正后只返回string
 		final JSONObject set = JSONUtil.createObj().set("test", new SQLException("test"));
 		Assert.assertEquals("{\"test\":\"java.sql.SQLException: test\"}", set.toString());
+	}
+
+	@Test
+	public void parseBigNumberTest(){
+		// 科学计数法使用BigDecimal处理，默认输出非科学计数形式
+		String str = "{\"test\":100000054128897953e4}";
+		Assert.assertEquals("{\"test\":1000000541288979530000}", JSONUtil.parseObj(str).toString());
 	}
 }

@@ -255,7 +255,7 @@ public class CollUtil {
 	 * @param coll1      集合1
 	 * @param coll2      集合2
 	 * @param otherColls 其它集合
-	 * @return 并集的集合，返回 {@link ArrayList}
+	 * @return 交集的集合，返回 {@link ArrayList}
 	 */
 	@SafeVarargs
 	public static <T> Collection<T> intersection(Collection<T> coll1, Collection<T> coll2, Collection<T>... otherColls) {
@@ -282,7 +282,7 @@ public class CollUtil {
 	 * @param coll1      集合1
 	 * @param coll2      集合2
 	 * @param otherColls 其它集合
-	 * @return 并集的集合，返回 {@link LinkedHashSet}
+	 * @return 交集的集合，返回 {@link LinkedHashSet}
 	 * @since 5.3.9
 	 */
 	@SafeVarargs
@@ -634,48 +634,6 @@ public class CollUtil {
 			}
 		}
 		return currentAlaDatas;
-	}
-
-	// ----------------------------------------------------------------------------------------------- new HashMap
-
-	/**
-	 * 新建一个HashMap
-	 *
-	 * @param <K> Key类型
-	 * @param <V> Value类型
-	 * @return HashMap对象
-	 * @see MapUtil#newHashMap()
-	 */
-	public static <K, V> HashMap<K, V> newHashMap() {
-		return MapUtil.newHashMap();
-	}
-
-	/**
-	 * 新建一个HashMap
-	 *
-	 * @param <K>     Key类型
-	 * @param <V>     Value类型
-	 * @param size    初始大小，由于默认负载因子0.75，传入的size会实际初始大小为size / 0.75
-	 * @param isOrder Map的Key是否有序，有序返回 {@link LinkedHashMap}，否则返回 {@link HashMap}
-	 * @return HashMap对象
-	 * @see MapUtil#newHashMap(int, boolean)
-	 * @since 3.0.4
-	 */
-	public static <K, V> HashMap<K, V> newHashMap(int size, boolean isOrder) {
-		return MapUtil.newHashMap(size, isOrder);
-	}
-
-	/**
-	 * 新建一个HashMap
-	 *
-	 * @param <K>  Key类型
-	 * @param <V>  Value类型
-	 * @param size 初始大小，由于默认负载因子0.75，传入的size会实际初始大小为size / 0.75
-	 * @return HashMap对象
-	 * @see MapUtil#newHashMap(int)
-	 */
-	public static <K, V> HashMap<K, V> newHashMap(int size) {
-		return MapUtil.newHashMap(size);
 	}
 
 	// ----------------------------------------------------------------------------------------------- new HashSet
@@ -1044,20 +1002,6 @@ public class CollUtil {
 	}
 
 	/**
-	 * 创建Map<br>
-	 * 传入AbstractMap和{@link Map}类将默认创建{@link HashMap}
-	 *
-	 * @param <K>     map键类型
-	 * @param <V>     map值类型
-	 * @param mapType map类型
-	 * @return {@link Map}实例
-	 * @see MapUtil#createMap(Class)
-	 */
-	public static <K, V> Map<K, V> createMap(Class<?> mapType) {
-		return MapUtil.createMap(mapType);
-	}
-
-	/**
 	 * 去重集合
 	 *
 	 * @param <T>        集合元素类型
@@ -1178,8 +1122,8 @@ public class CollUtil {
 	}
 
 	/**
-	 * 过滤，此方法产生一个新集合<br>
-	 * 过滤过程通过传入的Editor实现来返回需要的元素内容，这个Editor实现可以实现以下功能：
+	 * 编辑，此方法产生一个新集合<br>
+	 * 编辑过程通过传入的Editor实现来返回需要的元素内容，这个Editor实现可以实现以下功能：
 	 *
 	 * <pre>
 	 * 1、过滤出需要的对象，如果返回null表示这个元素对象抛弃
@@ -1188,15 +1132,18 @@ public class CollUtil {
 	 *
 	 * @param <T>        集合元素类型
 	 * @param collection 集合
-	 * @param editor     编辑器接口
+	 * @param editor     编辑器接口，{@code null}返回原集合
 	 * @return 过滤后的集合
 	 */
-	public static <T> Collection<T> filter(Collection<T> collection, Editor<T> editor) {
+	public static <T> Collection<T> edit(Collection<T> collection, Editor<T> editor) {
 		if (null == collection || null == editor) {
 			return collection;
 		}
 
 		Collection<T> collection2 = ObjectUtil.clone(collection);
+		if (isEmpty(collection2)) {
+			return collection2;
+		}
 		try {
 			collection2.clear();
 		} catch (UnsupportedOperationException e) {
@@ -1216,25 +1163,6 @@ public class CollUtil {
 
 	/**
 	 * 过滤<br>
-	 * 过滤过程通过传入的Editor实现来返回需要的元素内容，这个Editor实现可以实现以下功能：
-	 *
-	 * <pre>
-	 * 1、过滤出需要的对象，如果返回null表示这个元素对象抛弃
-	 * 2、修改元素对象，返回集合中为修改后的对象
-	 * </pre>
-	 *
-	 * @param <T>    集合元素类型
-	 * @param list   集合
-	 * @param editor 编辑器接口
-	 * @return 过滤后的数组
-	 * @since 4.1.8
-	 */
-	public static <T> List<T> filter(List<T> list, Editor<T> editor) {
-		return ListUtil.filter(list, editor);
-	}
-
-	/**
-	 * 过滤<br>
 	 * 过滤过程通过传入的Filter实现来过滤返回需要的元素内容，这个Filter实现可以实现以下功能：
 	 *
 	 * <pre>
@@ -1243,47 +1171,15 @@ public class CollUtil {
 	 *
 	 * @param <T>        集合元素类型
 	 * @param collection 集合
-	 * @param filter     过滤器
+	 * @param filter     过滤器，{@code null}返回原集合
 	 * @return 过滤后的数组
 	 * @since 3.1.0
 	 */
 	public static <T> Collection<T> filterNew(Collection<T> collection, Filter<T> filter) {
-		if (null == collection || null == filter) {
+		if(null == collection || null == filter){
 			return collection;
 		}
-
-		Collection<T> collection2 = ObjectUtil.clone(collection);
-		try {
-			collection2.clear();
-		} catch (UnsupportedOperationException e) {
-			// 克隆后的对象不支持清空，说明为不可变集合对象，使用默认的ArrayList保存结果
-			collection2 = new ArrayList<>();
-		}
-
-		for (T t : collection) {
-			if (filter.accept(t)) {
-				collection2.add(t);
-			}
-		}
-		return collection2;
-	}
-
-	/**
-	 * 过滤<br>
-	 * 过滤过程通过传入的Filter实现来过滤返回需要的元素内容，这个Filter实现可以实现以下功能：
-	 *
-	 * <pre>
-	 * 1、过滤出需要的对象，{@link Filter#accept(Object)}方法返回true的对象将被加入结果集合中
-	 * </pre>
-	 *
-	 * @param <T>    集合元素类型
-	 * @param list   集合
-	 * @param filter 过滤器
-	 * @return 过滤后的数组
-	 * @since 4.1.8
-	 */
-	public static <T> List<T> filterNew(List<T> list, Filter<T> filter) {
-		return ListUtil.filter(list, t -> filter.accept(t) ? t : null);
+		return edit(collection, t -> filter.accept(t) ? t : null);
 	}
 
 	/**
@@ -1475,7 +1371,7 @@ public class CollUtil {
 	 * @since 5.0.6
 	 */
 	public static <K, V> Map<K, V> fieldValueMap(Iterable<V> iterable, String fieldName) {
-		return IterUtil.fieldValueMap(null == iterable ? null : iterable.iterator(), fieldName);
+		return IterUtil.fieldValueMap(IterUtil.getIter(iterable), fieldName);
 	}
 
 	/**
@@ -1490,7 +1386,7 @@ public class CollUtil {
 	 * @since 5.0.6
 	 */
 	public static <K, V> Map<K, V> fieldValueAsMap(Iterable<?> iterable, String fieldNameForKey, String fieldNameForValue) {
-		return IterUtil.fieldValueAsMap(null == iterable ? null : iterable.iterator(), fieldNameForKey, fieldNameForValue);
+		return IterUtil.fieldValueAsMap(IterUtil.getIter(iterable), fieldNameForKey, fieldNameForValue);
 	}
 
 	/**
@@ -1538,47 +1434,6 @@ public class CollUtil {
 			final Object value = ReflectUtil.getFieldValue(t, fieldName);
 			return ObjectUtil.equal(value, fieldValue);
 		});
-	}
-
-	/**
-	 * 过滤<br>
-	 * 过滤过程通过传入的Editor实现来返回需要的元素内容，这个Editor实现可以实现以下功能：
-	 *
-	 * <pre>
-	 * 1、过滤出需要的对象，如果返回null表示这个元素对象抛弃
-	 * 2、修改元素对象，返回集合中为修改后的对象
-	 * </pre>
-	 *
-	 * @param <K>    Key类型
-	 * @param <V>    Value类型
-	 * @param map    Map
-	 * @param editor 编辑器接口
-	 * @return 过滤后的Map
-	 * @see MapUtil#filter(Map, Editor)
-	 */
-	public static <K, V> Map<K, V> filter(Map<K, V> map, Editor<Entry<K, V>> editor) {
-		return MapUtil.filter(map, editor);
-	}
-
-	/**
-	 * 过滤<br>
-	 * 过滤过程通过传入的Editor实现来返回需要的元素内容，这个Editor实现可以实现以下功能：
-	 *
-	 * <pre>
-	 * 1、过滤出需要的对象，如果返回null表示这个元素对象抛弃
-	 * 2、修改元素对象，返回集合中为修改后的对象
-	 * </pre>
-	 *
-	 * @param <K>    Key类型
-	 * @param <V>    Value类型
-	 * @param map    Map
-	 * @param filter 编辑器接口
-	 * @return 过滤后的Map
-	 * @see MapUtil#filter(Map, Filter)
-	 * @since 3.1.0
-	 */
-	public static <K, V> Map<K, V> filter(Map<K, V> map, Filter<Entry<K, V>> filter) {
-		return MapUtil.filter(map, filter);
 	}
 
 	/**
@@ -1703,17 +1558,6 @@ public class CollUtil {
 	}
 
 	/**
-	 * Map是否为空
-	 *
-	 * @param map 集合
-	 * @return 是否为空
-	 * @see MapUtil#isEmpty(Map)
-	 */
-	public static boolean isEmpty(Map<?, ?> map) {
-		return MapUtil.isEmpty(map);
-	}
-
-	/**
 	 * Iterable是否为空
 	 *
 	 * @param iterable Iterable对象
@@ -1755,17 +1599,6 @@ public class CollUtil {
 	 */
 	public static boolean isNotEmpty(Collection<?> collection) {
 		return false == isEmpty(collection);
-	}
-
-	/**
-	 * Map是否为非空
-	 *
-	 * @param map 集合
-	 * @return 是否为非空
-	 * @see MapUtil#isNotEmpty(Map)
-	 */
-	public static boolean isNotEmpty(Map<?, ?> map) {
-		return MapUtil.isNotEmpty(map);
 	}
 
 	/**
@@ -1830,7 +1663,7 @@ public class CollUtil {
 	 * @since 3.0.4
 	 */
 	public static Map<String, String> zip(String keys, String values, String delimiter, boolean isOrder) {
-		return ArrayUtil.zip(StrUtil.split(keys, delimiter), StrUtil.split(values, delimiter), isOrder);
+		return ArrayUtil.zip(StrUtil.splitToArray(keys, delimiter), StrUtil.splitToArray(values, delimiter), isOrder);
 	}
 
 	/**
@@ -1870,7 +1703,7 @@ public class CollUtil {
 		}
 
 		int entryCount = Math.min(keys.size(), values.size());
-		final Map<K, V> map = newHashMap(entryCount);
+		final Map<K, V> map = MapUtil.newHashMap(entryCount);
 
 		final Iterator<K> keyIterator = keys.iterator();
 		final Iterator<V> valueIterator = values.iterator();

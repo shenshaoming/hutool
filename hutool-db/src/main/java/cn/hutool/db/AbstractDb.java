@@ -682,7 +682,7 @@ public abstract class AbstractDb implements Serializable {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
-			return runner.count(conn, sql.build(), sql.getParamValueArray());
+			return runner.count(conn, sql);
 		} finally {
 			this.closeConnection(conn);
 		}
@@ -851,25 +851,6 @@ public abstract class AbstractDb implements Serializable {
 		try {
 			conn = this.getConnection();
 			return runner.page(conn, sql, page, rsh);
-		} finally {
-			this.closeConnection(conn);
-		}
-	}
-
-	/**
-	 * 分页查询
-	 *
-	 * @param sql  SQL语句字符串
-	 * @param page 分页对象
-	 * @return 结果对象
-	 * @throws SQLException SQL执行异常
-	 * @since 5.5.3
-	 */
-	public PageResult<Entity> page(CharSequence sql, Page page) throws SQLException {
-		Connection conn = null;
-		try {
-			conn = this.getConnection();
-			return runner.page(conn, SqlBuilder.of(sql), page);
 		} finally {
 			this.closeConnection(conn);
 		}

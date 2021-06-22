@@ -151,7 +151,7 @@ public class SqlBuilder implements Builder<String> {
 			entity.setTableName(wrapper.wrap(entity.getTableName()));
 		}
 
-		final boolean isOracle = StrUtil.equalsAnyIgnoreCase(dialectName, DialectName.ORACLE.name());// 对Oracle的特殊处理
+		final boolean isOracle = DialectName.ORACLE.match(dialectName);// 对Oracle的特殊处理
 		final StringBuilder fieldsPart = new StringBuilder();
 		final StringBuilder placeHolder = new StringBuilder();
 
@@ -181,8 +181,16 @@ public class SqlBuilder implements Builder<String> {
 				}
 			}
 		}
-		sql.append("INSERT INTO ")//
-				.append(entity.getTableName()).append(" (").append(fieldsPart).append(") VALUES (")//
+
+		// issue#1656@Github Phoenix兼容
+		if (DialectName.PHOENIX.match(dialectName)) {
+			sql.append("UPSERT INTO ");
+		} else {
+			sql.append("INSERT INTO ");
+		}
+
+		sql.append(entity.getTableName())
+				.append(" (").append(fieldsPart).append(") VALUES (")//
 				.append(placeHolder).append(")");
 
 		return this;
@@ -337,20 +345,6 @@ public class SqlBuilder implements Builder<String> {
 
 	/**
 	 * 添加Where语句<br>
-	 * 只支持单一的逻辑运算符（例如多个条件之间）
-	 *
-	 * @param logicalOperator 逻辑运算符
-	 * @param conditions      条件，当条件为空时，只添加WHERE关键字
-	 * @return 自己
-	 * @deprecated logicalOperator放在Condition中了，因此请使用 {@link #where(Condition...)}
-	 */
-	@Deprecated
-	public SqlBuilder where(LogicalOperator logicalOperator, Condition... conditions) {
-		return where(conditions);
-	}
-
-	/**
-	 * 添加Where语句<br>
 	 *
 	 * @param where WHERE语句之后跟的条件语句字符串
 	 * @return 自己
@@ -393,19 +387,6 @@ public class SqlBuilder implements Builder<String> {
 		}
 
 		return this;
-	}
-
-	/**
-	 * 添加Having语句
-	 *
-	 * @param logicalOperator 逻辑运算符
-	 * @param conditions      条件
-	 * @return 自己
-	 * @deprecated logicalOperator放在Condition中了，因此请使用 {@link #having(Condition...)}
-	 */
-	@Deprecated
-	public SqlBuilder having(LogicalOperator logicalOperator, Condition... conditions) {
-		return having(conditions);
 	}
 
 	/**
@@ -499,20 +480,6 @@ public class SqlBuilder implements Builder<String> {
 	}
 
 	/**
-	 * 配合JOIN的 ON语句，多表关联的条件语句<br>
-	 * 只支持单一的逻辑运算符（例如多个条件之间）
-	 *
-	 * @param logicalOperator 逻辑运算符
-	 * @param conditions      条件
-	 * @return 自己
-	 * @deprecated logicalOperator放在Condition中了，因此请使用 {@link #on(Condition...)}
-	 */
-	@Deprecated
-	public SqlBuilder on(LogicalOperator logicalOperator, Condition... conditions) {
-		return on(conditions);
-	}
-
-	/**
 	 * 配合JOIN的 ON语句，多表关联的条件语句，所有逻辑之间关系使用{@link Condition#setLinkOperator(LogicalOperator)} 定义
 	 *
 	 * @param conditions 条件
@@ -602,7 +569,7 @@ public class SqlBuilder implements Builder<String> {
 	 * @return this
 	 */
 	public SqlBuilder query(Query query) {
-		return this.select(query.getFields()).from(query.getTableNames()).where(LogicalOperator.AND, query.getWhere());
+		return this.select(query.getFields()).from(query.getTableNames()).where(query.getWhere());
 	}
 	// --------------------------------------------------------------- Builder end
 

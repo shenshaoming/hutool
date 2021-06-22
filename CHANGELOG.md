@@ -3,11 +3,58 @@
 
 -------------------------------------------------------------------------------------------------------------
 
-# 5.6.8 (2021-06-09)
+# 5.7.2 (2021-06-20)
 
 ### 🐣新特性
+* 【core   】     增加UserPassAuthenticator
+* 【db     】     获取分组数据源时，移除公共属性项
+* 【core   】     增加StrJoiner
+* 【core   】     增加TreeBuilder
+* 【core   】     IterUtil增加getFirstNonNull方法
+* 【core   】     NumberUtil判空改为isBlank（issue#1664@Github）
+* 【jwt    】     增加JWTValidator、RegisteredPayload
+* 【db     】     增加Phoenix方言（issue#1656@Github）
 
 ### 🐞Bug修复
+* 【db     】     修复Oracle下别名错误造成的SQL语法啊错误（issue#I3VTQW@Gitee）
+* 【core   】     修复ConcurrencyTester重复使用时开始测试未清空之前任务的问题（issue#I3VSDO@Gitee）
+* 【poi    】     修复使用BigWriter写出，ExcelWriter修改单元格值失败的问题（issue#I3VSDO@Gitee）
+* 【jwt    】     修复Hmac算法下生成签名是hex的问题（issue#I3W6IP@Gitee）
+* 【core   】     修复TreeUtil.build中deep失效问题（issue#1661@Github）
+* 【json   】     修复XmlUtil.xmlToBean判断问题（issue#1663@Github）
+
+-------------------------------------------------------------------------------------------------------------
+
+# 5.7.1 (2021-06-16)
+
+### 🐣新特性
+* 【db     】     NamedSql支持in操作(issue#1652@Github)
+* 【all    】     JWT模块加入到all和bom包中(issue#1654@Github)
+* 【core   】     CollUtil删除所有Map相关操作
+* 【all    】     **重要！** 删除过期方法
+* 【core   】     增加IterChian类
+
+### 🐞Bug修复
+
+-------------------------------------------------------------------------------------------------------------
+
+# 5.7.0 (2021-06-15)
+
+### 🐣新特性
+* 【jwt    】     添加JWT模块，实现了JWT的创建、解析和验证
+* 【crypto 】     SymmetricCrypto增加update方法（pr#1642@Github）
+* 【crypto 】     MacEngine增加接口update,doFinal,reset等接口
+* 【core   】     StrSpliter更名为StrSplitter
+* 【core   】     NumberUtil的decimalFormat增加数字检查
+* 【http   】     HttpBase的httpVersion方法设置为无效(issue#1644@Github)
+* 【extra  】     Sftp增加download重载(issue#I3VBSL@Gitee)
+* 【cache  】     修改FIFOCache初始大小(issue#1647@Github)
+
+### 🐞Bug修复
+* 【db     】     修复count方法丢失参数问题(issue#I3VBSL@Gitee)
+* 【db     】     修复SpringUtil工具在`@PostConstruct` 注解标注的方法下失效问题(pr#341@Gitee)
+* 【json   】     修复JSONUtil.parse方法未判断有序问题(issue#I3VHVY@Gitee)
+* 【json   】     修复JSONArray.put越界无法加入问题(issue#I3VMLU@Gitee)
 
 -------------------------------------------------------------------------------------------------------------
 

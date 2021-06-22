@@ -2,8 +2,6 @@ package cn.hutool.core.collection;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Dict;
-import cn.hutool.core.lang.Editor;
-import cn.hutool.core.lang.Filter;
 import cn.hutool.core.map.MapUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -102,7 +100,7 @@ public class CollUtilTest {
 
 		Collection<String> union = CollUtil.union(list1, list2);
 
-		Assert.assertEquals(3, CollUtil.count(union, t -> "b".equals(t)));
+		Assert.assertEquals(3, CollUtil.count(union, "b"::equals));
 	}
 
 	@Test
@@ -111,7 +109,7 @@ public class CollUtilTest {
 		ArrayList<String> list2 = CollUtil.newArrayList("a", "b", "b", "b", "c", "d");
 
 		Collection<String> intersection = CollUtil.intersection(list1, list2);
-		Assert.assertEquals(2, CollUtil.count(intersection, t -> "b".equals(t)));
+		Assert.assertEquals(2, CollUtil.count(intersection, "b"::equals));
 	}
 
 	@Test
@@ -235,8 +233,9 @@ public class CollUtilTest {
 		map.put("c", "3");
 
 		final String[] result = new String[1];
+		String a = "a";
 		CollUtil.forEach(map, (key, value, index) -> {
-			if ("a".equals(key)) {
+			if (a.equals(key)) {
 				result[0] = value;
 			}
 		});
@@ -247,7 +246,7 @@ public class CollUtilTest {
 	public void filterTest() {
 		ArrayList<String> list = CollUtil.newArrayList("a", "b", "c");
 
-		Collection<String> filtered = CollUtil.filter(list, (Editor<String>) t -> t + 1);
+		Collection<String> filtered = CollUtil.edit(list, t -> t + 1);
 
 		Assert.assertEquals(CollUtil.newArrayList("a1", "b1", "c1"), filtered);
 	}
@@ -256,7 +255,7 @@ public class CollUtilTest {
 	public void filterTest2() {
 		ArrayList<String> list = CollUtil.newArrayList("a", "b", "c");
 
-		ArrayList<String> filtered = CollUtil.filter(list, (Filter<String>) t -> false == "a".equals(t));
+		ArrayList<String> filtered = CollUtil.filter(list, t -> false == "a".equals(t));
 
 		// 原地过滤
 		Assert.assertSame(list, filtered);

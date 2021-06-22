@@ -12,10 +12,11 @@ import java.util.regex.Pattern;
 
 /**
  * 字符串切分器
- *x
+ *
  * @author Looly
+ * @since 5.7.0
  */
-public class StrSpliter {
+public class StrSplitter {
 
 	//---------------------------------------------------------------------------------------------- Split by char
 

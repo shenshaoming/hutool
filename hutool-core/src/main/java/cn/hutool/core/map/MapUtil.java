@@ -596,11 +596,11 @@ public class MapUtil {
 	// ----------------------------------------------------------------------------------------------- filter
 
 	/**
-	 * 过滤<br>
-	 * 过滤过程通过传入的Editor实现来返回需要的元素内容，这个Editor实现可以实现以下功能：
+	 * 编辑Map<br>
+	 * 编辑过程通过传入的Editor实现来返回需要的元素内容，这个Editor实现可以实现以下功能：
 	 *
 	 * <pre>
-	 * 1、过滤出需要的对象，如果返回null表示这个元素对象抛弃
+	 * 1、过滤出需要的对象，如果返回{@code null}表示这个元素对象抛弃
 	 * 2、修改元素对象，返回集合中为修改后的对象
 	 * </pre>
 	 *
@@ -608,19 +608,24 @@ public class MapUtil {
 	 * @param <V>    Value类型
 	 * @param map    Map
 	 * @param editor 编辑器接口
-	 * @return 过滤后的Map
+	 * @return 编辑后的Map
 	 */
-	public static <K, V> Map<K, V> filter(Map<K, V> map, Editor<Entry<K, V>> editor) {
+	public static <K, V> Map<K, V> edit(Map<K, V> map, Editor<Entry<K, V>> editor) {
 		if (null == map || null == editor) {
 			return map;
 		}
 
-		final Map<K, V> map2 = ObjectUtil.clone(map);
+		Map<K, V> map2 = ObjectUtil.clone(map);
 		if (isEmpty(map2)) {
 			return map2;
 		}
+		try {
+			map2.clear();
+		} catch (UnsupportedOperationException e) {
+			// 克隆后的对象不支持清空，说明为不可变集合对象，使用默认的ArrayList保存结果
+			map2 = new HashMap<>();
+		}
 
-		map2.clear();
 		Entry<K, V> modified;
 		for (Entry<K, V> entry : map.entrySet()) {
 			modified = editor.edit(entry);
@@ -642,27 +647,15 @@ public class MapUtil {
 	 * @param <K>    Key类型
 	 * @param <V>    Value类型
 	 * @param map    Map
-	 * @param filter 编辑器接口
+	 * @param filter 过滤器接口，{@code null}返回原Map
 	 * @return 过滤后的Map
 	 * @since 3.1.0
 	 */
 	public static <K, V> Map<K, V> filter(Map<K, V> map, Filter<Entry<K, V>> filter) {
-		if (null == map || null == filter) {
+		if(null == map || null == filter){
 			return map;
 		}
-
-		final Map<K, V> map2 = ObjectUtil.clone(map);
-		if (isEmpty(map2)) {
-			return map2;
-		}
-
-		map2.clear();
-		for (Entry<K, V> entry : map.entrySet()) {
-			if (filter.accept(entry)) {
-				map2.put(entry.getKey(), entry.getValue());
-			}
-		}
-		return map2;
+		return edit(map, t -> filter.accept(t) ? t : null);
 	}
 
 	/**
@@ -671,18 +664,26 @@ public class MapUtil {
 	 * @param <K>  Key类型
 	 * @param <V>  Value类型
 	 * @param map  原始Map
-	 * @param keys 键列表
+	 * @param keys 键列表，{@code null}返回原Map
 	 * @return Map 结果，结果的Map类型与原Map保持一致
 	 * @since 4.0.10
 	 */
 	@SuppressWarnings("unchecked")
 	public static <K, V> Map<K, V> filter(Map<K, V> map, K... keys) {
-		final Map<K, V> map2 = ObjectUtil.clone(map);
+		if(null == map || null == keys){
+			return map;
+		}
+		Map<K, V> map2 = ObjectUtil.clone(map);
 		if (isEmpty(map2)) {
 			return map2;
 		}
+		try {
+			map2.clear();
+		} catch (UnsupportedOperationException e) {
+			// 克隆后的对象不支持清空，说明为不可变集合对象，使用默认的ArrayList保存结果
+			map2 = new HashMap<>();
+		}
 
-		map2.clear();
 		for (K key : keys) {
 			if (map.containsKey(key)) {
 				map2.put(key, map.get(key));
@@ -703,7 +704,7 @@ public class MapUtil {
 	 * @since 3.2.2
 	 */
 	public static <T> Map<T, T> reverse(Map<T, T> map) {
-		return filter(map, (Editor<Entry<T, T>>) t -> new Entry<T, T>() {
+		return edit(map, t -> new Entry<T, T>() {
 
 			@Override
 			public T getKey() {
@@ -892,7 +893,7 @@ public class MapUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <K, V> Map<K, V> getAny(Map<K, V> map, final K... keys) {
-		return filter(map, (Filter<Entry<K, V>>) entry -> ArrayUtil.contains(keys, entry.getKey()));
+		return filter(map, entry -> ArrayUtil.contains(keys, entry.getKey()));
 	}
 
 	/**

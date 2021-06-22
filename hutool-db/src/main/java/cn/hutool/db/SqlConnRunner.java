@@ -1,14 +1,11 @@
 package cn.hutool.db;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.lang.Assert;
 import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.db.dialect.Dialect;
 import cn.hutool.db.dialect.DialectFactory;
 import cn.hutool.db.handler.EntityListHandler;
 import cn.hutool.db.handler.HandleHelper;
-import cn.hutool.db.handler.NumberHandler;
 import cn.hutool.db.handler.PageResultHandler;
 import cn.hutool.db.handler.RsHandler;
 import cn.hutool.db.sql.Condition.LikeType;
@@ -291,19 +288,7 @@ public class SqlConnRunner extends DialectRunner {
 	 * @since 5.6.6
 	 */
 	public long count(Connection conn, CharSequence selectSql, Object... params) throws SQLException {
-		Assert.notBlank(selectSql, "Select SQL must be not blank!");
-		final int orderByIndex = StrUtil.indexOfIgnoreCase(selectSql, " order by");
-		if (orderByIndex > 0) {
-			selectSql = StrUtil.subPre(selectSql, orderByIndex);
-		}
-
-		SqlBuilder sqlBuilder = SqlBuilder.of(selectSql)
-				.insertPreFragment("SELECT count(1) from(")
-				// issue#I3IJ8X@Gitee，在子查询时需设置单独别名，此处为了防止和用户的表名冲突，使用自定义的较长别名
-				.append(") as _hutool_alias_count_")
-				// 添加参数
-				.addParams(params);
-		return page(conn, sqlBuilder, null, new NumberHandler()).intValue();
+		return count(conn, SqlBuilder.of(selectSql).addParams(params));
 	}
 
 	/**
@@ -337,7 +322,7 @@ public class SqlConnRunner extends DialectRunner {
 	 */
 	public PageResult<Entity> page(Connection conn, SqlBuilder sqlBuilder, Page page) throws SQLException {
 		final PageResultHandler pageResultHandler = new PageResultHandler(
-				new PageResult<>(page.getPageNumber(), page.getPageSize(), (int) count(conn, sqlBuilder.build())),
+				new PageResult<>(page.getPageNumber(), page.getPageSize(), (int) count(conn, sqlBuilder)),
 				this.caseInsensitive);
 		return page(conn, sqlBuilder, page, pageResultHandler);
 	}

@@ -572,17 +572,6 @@ public class DateTime extends Date {
 	}
 
 	/**
-	 * 获得指定日期的毫秒数部分<br>
-	 *
-	 * @return 毫秒数
-	 * @deprecated 拼写错误，请使用{@link #millisecond()}
-	 */
-	@Deprecated
-	public int millsecond() {
-		return getField(DateField.MILLISECOND);
-	}
-
-	/**
 	 * 是否为上午
 	 *
 	 * @return 是否为上午
@@ -735,8 +724,8 @@ public class DateTime extends Date {
 	 * 当前日期是否在日期指定范围内<br>
 	 * 起始日期和结束日期可以互换
 	 *
-	 * @param beginDate 起始日期
-	 * @param endDate   结束日期
+	 * @param beginDate 起始日期（包含）
+	 * @param endDate   结束日期（包含）
 	 * @return 是否在范围内
 	 * @since 3.0.8
 	 */
