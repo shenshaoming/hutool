@@ -4,6 +4,8 @@ import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.PageUtil;
 import cn.hutool.core.util.RandomUtil;
+import lombok.Builder;
+import lombok.Data;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -111,5 +113,26 @@ public class ListUtilTest {
 		// 对子列表操作不影响原列表
 		Assert.assertEquals(4, of.size());
 		Assert.assertEquals(1, sub.size());
+	}
+
+	@Test
+	public void toList() {
+		int size = 5;
+		List<Person> personList = new ArrayList<>(size);
+		for (int i = 0; i < size; i++) {
+			personList.add(new Person(i, "name-" + i));
+		}
+		List<Integer> personIds = ListUtil.toList(personList, Person::getId);
+		assert personIds.size() == size;
+		for (int i = 0; i < size; i++) {
+			assert personIds.contains(i);
+		}
+	}
+
+	@Data
+	@Builder
+	private static class Person {
+		private int id;
+		private String name;
 	}
 }
