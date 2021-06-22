@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 
 /**
  * List相关工具类
@@ -138,6 +139,26 @@ public class ListUtil {
 	@SafeVarargs
 	public static <T> ArrayList<T> toList(T... values) {
 		return (ArrayList<T>) list(false, values);
+	}
+
+	/**
+	 * 将一个集合按照指定规则 {@code func} 得到另一个集合
+	 *
+	 * @param list 待操作的集合
+	 * @param func 指定的规则
+	 * @param <T> 集合元素泛型
+	 * @param <E> 结果集泛型
+	 * @return List<T>
+	 */
+	public static <T, E> List<T> toList(List<E> list, Function<E, T> func) {
+		if (list == null || list.isEmpty()) {
+			return new ArrayList<>();
+		}
+		List<T> result = new ArrayList<>(list.size());
+		for (E e : list) {
+			result.add(func.apply(e));
+		}
+		return result;
 	}
 
 	/**
